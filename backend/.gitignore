@@ -1,0 +1,18 @@
+# node
+node_modules/
+
+# env files
+.env
+backend/.env
+frontend/.env
+
+# firebase admin key
+firebase-service-account.json
+backend/firebase-service-account.json
+
+# build
+dist/
+build/
+
+# logs
+npm-debug.log*
