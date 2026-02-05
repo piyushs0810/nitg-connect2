@@ -6,9 +6,11 @@ import { GraduationCap, Mail, Lock } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { authAPI } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,10 +24,9 @@ export default function Login() {
     try {
       setLoading(true);
 
-      await authAPI.login(email, password);
-
-      console.log("Login successful");
-      navigate("/dashboard");
+      const { token, user } = await authAPI.login(email, password);
+      login(user, token);
+      navigate("/dashboard", { replace: true });
     } catch (err: any) {
       setError(err.message || "Login failed. Please check your credentials.");
     } finally {

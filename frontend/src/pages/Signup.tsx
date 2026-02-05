@@ -2,13 +2,15 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { GraduationCap, Mail, Lock, User, Hash } from "lucide-react";
+import { GraduationCap, Mail, Lock, User, Hash, Phone, Building2, Home, IdCard } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { authAPI } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Signup() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -16,6 +18,12 @@ export default function Signup() {
     email: "",
     password: "",
     confirmPassword: "",
+    branch: "",
+    contactNumber: "",
+    hostel: "",
+    roomNumber: "",
+    batch: "",
+    bloodGroup: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -37,15 +45,20 @@ export default function Signup() {
     try {
       setLoading(true);
 
-      await authAPI.signup(
-        formData.email,
-        formData.password,
-        formData.name,
-        formData.rollNo
-      );
-
-      console.log("User created successfully");
-      navigate("/dashboard"); // redirect after signup
+      const { token, user } = await authAPI.signup({
+        email: formData.email,
+        password: formData.password,
+        name: formData.name,
+        rollNo: formData.rollNo,
+        branch: formData.branch,
+        contactNumber: formData.contactNumber,
+        hostel: formData.hostel,
+        roomNumber: formData.roomNumber,
+        batch: formData.batch,
+        bloodGroup: formData.bloodGroup,
+      });
+      login(user, token);
+      navigate("/dashboard", { replace: true });
     } catch (err: any) {
       setError(err.message || "Signup failed. Please try again.");
     } finally {
@@ -81,11 +94,80 @@ export default function Signup() {
                 </div>
               </div>
 
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <Label>Roll Number</Label>
+                  <div className="relative">
+                    <Hash className="icon-left" />
+                    <Input name="rollNo" onChange={handleChange} required />
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Branch</Label>
+                  <div className="relative">
+                    <Building2 className="icon-left" />
+                    <Input
+                      name="branch"
+                      placeholder="e.g. Computer Science"
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <Label>Contact Number</Label>
+                  <div className="relative">
+                    <Phone className="icon-left" />
+                    <Input
+                      name="contactNumber"
+                      placeholder="e.g. +91-9876543210"
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Batch</Label>
+                  <div className="relative">
+                    <IdCard className="icon-left" />
+                    <Input name="batch" placeholder="e.g. 2021-2025" onChange={handleChange} required />
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <Label>Hostel</Label>
+                  <div className="relative">
+                    <Home className="icon-left" />
+                    <Input
+                      name="hostel"
+                      placeholder="e.g. Hostel Block A"
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Room Number</Label>
+                  <div className="relative">
+                    <Home className="icon-left" />
+                    <Input name="roomNumber" placeholder="e.g. 204" onChange={handleChange} required />
+                  </div>
+                </div>
+              </div>
+
               <div>
-                <Label>Roll Number</Label>
+                <Label>Blood Group</Label>
                 <div className="relative">
-                  <Hash className="icon-left" />
-                  <Input name="rollNo" onChange={handleChange} required />
+                  <IdCard className="icon-left" />
+                  <Input name="bloodGroup" placeholder="e.g. O+" onChange={handleChange} required />
                 </div>
               </div>
 

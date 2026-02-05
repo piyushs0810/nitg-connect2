@@ -25,6 +25,71 @@ async function apiRequest<T>(
 }
 
 // Auth API
+type SignupPayload = {
+  email: string;
+  password: string;
+  name?: string;
+  rollNo?: string;
+  branch?: string;
+  contactNumber?: string;
+  hostel?: string;
+  roomNumber?: string;
+  batch?: string;
+  bloodGroup?: string;
+  birthDate?: string;
+};
+
+export const usersAPI = {
+  getAll: async () => {
+    return apiRequest<Array<any>>("/users");
+  },
+
+  update: async (
+    id: string,
+    payload: {
+      name?: string;
+      rollNo?: string;
+      branch?: string;
+      contactNumber?: string;
+      hostel?: string;
+      roomNumber?: string;
+      batch?: string;
+      bloodGroup?: string;
+      birthDate?: string;
+    }
+  ) => {
+    return apiRequest<Record<string, unknown>>(`/users/${id}` as const, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+  },
+};
+
+export const clubsAPI = {
+  getAll: async () => {
+    return apiRequest<Array<any>>("/clubs");
+  },
+
+  create: async (payload: {
+    name: string;
+    president: string;
+    contact?: string;
+    description?: string;
+    leads?: string;
+  }) => {
+    return apiRequest<{ id: string } & typeof payload & { createdAt?: string }>("/clubs", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+};
+
+export const birthdaysAPI = {
+  getAll: async () => {
+    return apiRequest<Array<any>>("/birthdays");
+  },
+};
+
 export const authAPI = {
   login: async (email: string, password: string) => {
     const data = await apiRequest<{ token: string; user: any }>("/auth/login", {
@@ -38,10 +103,10 @@ export const authAPI = {
     return data;
   },
 
-  signup: async (email: string, password: string, name?: string, rollNo?: string) => {
+  signup: async (payload: SignupPayload) => {
     const data = await apiRequest<{ token: string; user: any }>("/auth/signup", {
       method: "POST",
-      body: JSON.stringify({ email, password, name, rollNo }),
+      body: JSON.stringify(payload),
     });
     if (data.token) {
       localStorage.setItem("token", data.token);
@@ -147,6 +212,56 @@ export const noticesAPI = {
 
   delete: async (id: string) => {
     return apiRequest(`/notices/${id}`, {
+      method: "DELETE",
+    });
+  },
+};
+
+// Marketplace API
+export const marketplaceAPI = {
+  getAll: async () => {
+    return apiRequest<Array<any>>("/marketplace");
+  },
+
+  getById: async (id: string) => {
+    return apiRequest(`/marketplace/${id}`);
+  },
+
+  create: async (listing: {
+    title: string;
+    description: string;
+    price: number;
+    category: string;
+    seller?: string;
+    contact?: string;
+    image?: string | null;
+  }) => {
+    return apiRequest<{ id: string } & typeof listing>("/marketplace", {
+      method: "POST",
+      body: JSON.stringify(listing),
+    });
+  },
+
+  update: async (
+    id: string,
+    updates: Partial<{
+      title: string;
+      description: string;
+      price: number;
+      category: string;
+      seller?: string;
+      contact?: string;
+      image?: string | null;
+    }>
+  ) => {
+    return apiRequest(`/marketplace/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(updates),
+    });
+  },
+
+  delete: async (id: string) => {
+    return apiRequest(`/marketplace/${id}`, {
       method: "DELETE",
     });
   },

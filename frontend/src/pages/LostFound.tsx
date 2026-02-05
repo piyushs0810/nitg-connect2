@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { lostFoundAPI } from "@/lib/api";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type Item = {
   id: string;
@@ -37,6 +38,9 @@ export default function LostFound() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("all");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
   // form state
   const [title, setTitle] = useState("");
@@ -119,6 +123,34 @@ export default function LostFound() {
     const matchesFilter = filter === "all" || item.type === filter;
     return matchesSearch && matchesFilter;
   });
+
+  const openConfirm = (item: Item) => {
+    setSelectedItem(item);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmClose = (open: boolean) => {
+    setConfirmOpen(open);
+    if (!open && !confirmLoading) {
+      setSelectedItem(null);
+    }
+  };
+
+  const markAsFound = async () => {
+    if (!selectedItem) return;
+
+    try {
+      setConfirmLoading(true);
+      await lostFoundAPI.delete(selectedItem.id);
+      setItems((prev) => prev.filter((item) => item.id !== selectedItem.id));
+    } catch (error) {
+      console.error("Error removing item:", error);
+    } finally {
+      setConfirmLoading(false);
+      setConfirmOpen(false);
+      setSelectedItem(null);
+    }
+  };
 
   return (
     <Layout>
@@ -263,6 +295,17 @@ export default function LostFound() {
                       </span>
                     )}
                   </div>
+
+                  <div className="mt-4 flex justify-end">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="border-emerald-600 text-emerald-700 hover:bg-emerald-50"
+                      onClick={() => openConfirm(item)}
+                    >
+                      Found
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -276,6 +319,23 @@ export default function LostFound() {
           )}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={handleConfirmClose}
+        title="Mark as found?"
+        description={
+          selectedItem ? (
+            <span>
+              This will remove <strong>{selectedItem.title}</strong> from Lost &amp; Found.
+            </span>
+          ) : null
+        }
+        confirmLabel="Yes, remove"
+        cancelLabel="Cancel"
+        onConfirm={markAsFound}
+        loading={confirmLoading}
+      />
     </Layout>
   );
 }

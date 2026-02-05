@@ -1,8 +1,19 @@
 import { Layout } from "@/components/layout/Layout";
 import { QuickAccessCard } from "@/components/ui/QuickAccessCard";
-import { Search, IdCard, Bell, ShoppingBag, Users, BookOpen } from "lucide-react";
+import {
+  Search,
+  IdCard,
+  Bell,
+  ShoppingBag,
+  Users,
+  BookOpen,
+  Cake,
+  PartyPopper,
+  Settings,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
 
 const quickAccessItems = [
   {
@@ -33,6 +44,34 @@ const quickAccessItems = [
     href: "/marketplace",
     color: "accent" as const,
   },
+  {
+    title: "People Search",
+    description: "Find classmates by name, branch, or roll number",
+    icon: Users,
+    href: "/people-search",
+    color: "accent" as const,
+  },
+  {
+    title: "Upcoming Birthdays",
+    description: "See whose birthday is coming up soon",
+    icon: Cake,
+    href: "/birthdays",
+    color: "success" as const,
+  },
+  {
+    title: "Campus Clubs",
+    description: "Browse and register college clubs",
+    icon: PartyPopper,
+    href: "/clubs",
+    color: "primary" as const,
+  },
+  {
+    title: "Settings",
+    description: "Update your campus profile information",
+    icon: Settings,
+    href: "/settings",
+    color: "accent" as const,
+  },
 ];
 
 const stats = [
@@ -43,6 +82,56 @@ const stats = [
 ];
 
 export default function Index() {
+  const { isAuthenticated } = useAuth();
+
+  const coreFeatures = [
+    {
+      title: "Digital Web ID",
+      description: "Access your student ID anytime, anywhere. No more forgetting your physical card.",
+      icon: IdCard,
+      wrapperClass: "bg-primary/10",
+      iconClass: "text-primary",
+    },
+    {
+      title: "Real-time Notices",
+      description: "Never miss important announcements from academics, hostels, or clubs.",
+      icon: Bell,
+      wrapperClass: "bg-green-100",
+      iconClass: "text-green-700",
+    },
+    {
+      title: "Student Marketplace",
+      description: "Buy and sell textbooks, electronics, and more within the campus community.",
+      icon: BookOpen,
+      wrapperClass: "bg-amber-100",
+      iconClass: "text-amber-700",
+    },
+  ];
+
+  const extraFeatures = [
+    {
+      title: "Campus Clubs",
+      description: "Discover societies and stay updated with new registrations.",
+      icon: PartyPopper,
+      wrapperClass: "bg-primary/10",
+      iconClass: "text-primary",
+    },
+    {
+      title: "Buy & Sell",
+      description: "List items or browse student deals tailored for campus life.",
+      icon: ShoppingBag,
+      wrapperClass: "bg-emerald-100",
+      iconClass: "text-emerald-700",
+    },
+    {
+      title: "People Search",
+      description: "Find classmates and connect using branch, hostel, or roll numbers.",
+      icon: Users,
+      wrapperClass: "bg-sky-100",
+      iconClass: "text-sky-700",
+    },
+  ];
+
   return (
     <Layout>
       {/* Hero Section */}
@@ -121,57 +210,51 @@ export default function Index() {
                 Built for Students, by Students
               </h2>
               <div className="space-y-4">
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 h-10 w-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                    <IdCard className="h-5 w-5 text-primary" />
+                {coreFeatures.map(({ title, description, icon: Icon, wrapperClass, iconClass }) => (
+                  <div key={title} className="flex gap-4">
+                    <div className={`flex-shrink-0 h-10 w-10 ${wrapperClass} rounded-lg flex items-center justify-center`}>
+                      <Icon className={`h-5 w-5 ${iconClass}`} />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground mb-1">{title}</h3>
+                      <p className="text-sm text-muted-foreground">{description}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-1">Digital Web ID</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Access your student ID anytime, anywhere. No more forgetting your physical card.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
-                    <Bell className="h-5 w-5 text-green-700" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-1">Real-time Notices</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Never miss important announcements from academics, hostels, or clubs.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex-shrink-0 h-10 w-10 bg-amber-100 rounded-lg flex items-center justify-center">
-                    <BookOpen className="h-5 w-5 text-amber-700" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground mb-1">Student Marketplace</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Buy and sell textbooks, electronics, and more within the campus community.
-                    </p>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
-            <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl p-8 md:p-12">
-              <div className="bg-card rounded-xl p-6 shadow-lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="h-12 w-12 bg-primary/20 rounded-full flex items-center justify-center">
-                    <Users className="h-6 w-6 text-primary" />
+            {isAuthenticated ? (
+              <div className="space-y-4">
+                {extraFeatures.map(({ title, description, icon: Icon, wrapperClass, iconClass }) => (
+                  <div key={title} className="flex gap-4">
+                    <div className={`flex-shrink-0 h-10 w-10 ${wrapperClass} rounded-lg flex items-center justify-center`}>
+                      <Icon className={`h-5 w-5 ${iconClass}`} />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground mb-1">{title}</h3>
+                      <p className="text-sm text-muted-foreground">{description}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-semibold text-foreground">Join the Community</p>
-                    <p className="text-sm text-muted-foreground">1,200+ students already on board</p>
-                  </div>
-                </div>
-                <Link to="/signup">
-                  <Button className="w-full">Create Your Account</Button>
-                </Link>
+                ))}
               </div>
-            </div>
+            ) : (
+              <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl p-8 md:p-12">
+                <div className="bg-card rounded-xl p-6 shadow-lg">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="h-12 w-12 bg-primary/20 rounded-full flex items-center justify-center">
+                      <Users className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-foreground">Join the Community</p>
+                      <p className="text-sm text-muted-foreground">1,200+ students already on board</p>
+                    </div>
+                  </div>
+                  <Link to="/signup">
+                    <Button className="w-full">Create Your Account</Button>
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>

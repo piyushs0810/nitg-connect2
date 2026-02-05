@@ -1,17 +1,56 @@
+import { useRef } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
-import { Download, Share2, QrCode, Shield } from "lucide-react";
+import { Download, Shield, User } from "lucide-react";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+
+import { useAuth } from "@/context/AuthContext";
+
+const InfoItem = ({ label, value }: { label: string; value?: string }) => (
+  <div>
+    <p className="text-xs text-muted-foreground uppercase tracking-wide">{label}</p>
+    <p className="text-sm font-medium text-foreground">{value || "Not provided"}</p>
+  </div>
+);
 
 export default function WebId() {
+  const { user } = useAuth();
+  const cardRef = useRef<HTMLDivElement>(null);
+
   const studentData = {
-    name: "Rahul Sharma",
-    rollNo: "2021BCS042",
-    branch: "Computer Science & Engineering",
-    batch: "2021-2025",
-    email: "2021bcs042@nitgoa.ac.in",
-    bloodGroup: "O+",
-    hostel: "Hostel Block A, Room 204",
-    validUntil: "July 2025",
+    name: user?.name ?? "Student",
+    rollNo: user?.rollNo ?? "N/A",
+    branch: user?.branch ?? "Department",
+    batch: user?.batch ?? "Not provided",
+    email: user?.email ?? "student@nitg.ac.in",
+    bloodGroup: user?.bloodGroup ?? "Not provided",
+    hostel: user?.hostel ?? "Not provided",
+    roomNumber: user?.roomNumber ?? "Not provided",
+    contactNumber: user?.contactNumber ?? "Not provided",
+  };
+
+  const handleDownload = async () => {
+    if (!cardRef.current) return;
+
+    const canvas = await html2canvas(cardRef.current, {
+      scale: window.devicePixelRatio || 2,
+      useCORS: true,
+      backgroundColor: "#ffffff",
+    });
+
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const margin = 12;
+    const printableWidth = pageWidth - margin * 2;
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfHeight = (imgProps.height * printableWidth) / imgProps.width;
+
+    pdf.setFontSize(14);
+    pdf.text("NIT Goa - Digital Web ID", pageWidth / 2, margin, { align: "center" });
+    pdf.addImage(imgData, "PNG", margin, margin + 4, printableWidth, pdfHeight, undefined, "FAST");
+    pdf.save(`${studentData.rollNo || "web-id"}.pdf`);
   };
 
   return (
@@ -26,7 +65,7 @@ export default function WebId() {
 
           <div className="max-w-lg mx-auto">
             {/* ID Card */}
-            <div className="card-base overflow-hidden">
+            <div ref={cardRef} className="card-base overflow-hidden">
               {/* Card Header */}
               <div className="bg-primary p-4 text-primary-foreground">
                 <div className="flex items-center justify-between">
@@ -45,12 +84,8 @@ export default function WebId() {
                 <div className="flex gap-6">
                   {/* Photo */}
                   <div className="flex-shrink-0">
-                    <div className="h-32 w-28 bg-muted rounded-lg overflow-hidden border-2 border-border">
-                      <img
-                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=180&fit=crop&crop=face"
-                        alt="Student Photo"
-                        className="w-full h-full object-cover"
-                      />
+                    <div className="h-32 w-28 bg-muted rounded-lg border-2 border-border flex items-center justify-center">
+                      <User className="h-12 w-12 text-muted-foreground" />
                     </div>
                   </div>
 
@@ -61,47 +96,23 @@ export default function WebId() {
                       <p className="font-semibold text-foreground">{studentData.name}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wide">Roll Number</p>
-                      <p className="font-semibold text-foreground">{studentData.rollNo}</p>
-                    </div>
-                    <div>
                       <p className="text-xs text-muted-foreground uppercase tracking-wide">Branch</p>
                       <p className="text-sm text-foreground">{studentData.branch}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide">Batch</p>
+                      <p className="text-sm text-foreground">{studentData.batch}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Additional Info Grid */}
                 <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-border">
-                  <div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Batch</p>
-                    <p className="text-sm font-medium text-foreground">{studentData.batch}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Blood Group</p>
-                    <p className="text-sm font-medium text-foreground">{studentData.bloodGroup}</p>
-                  </div>
-                  <div className="col-span-2">
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Email</p>
-                    <p className="text-sm font-medium text-foreground">{studentData.email}</p>
-                  </div>
-                  <div className="col-span-2">
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Hostel</p>
-                    <p className="text-sm font-medium text-foreground">{studentData.hostel}</p>
-                  </div>
-                </div>
-
-                {/* QR Code Section */}
-                <div className="mt-6 pt-6 border-t border-border">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wide">Valid Until</p>
-                      <p className="text-sm font-medium text-foreground">{studentData.validUntil}</p>
-                    </div>
-                    <div className="h-20 w-20 bg-muted rounded-lg flex items-center justify-center border border-border">
-                      <QrCode className="h-12 w-12 text-foreground" />
-                    </div>
-                  </div>
+                  <InfoItem label="Blood Group" value={studentData.bloodGroup} />
+                  <InfoItem label="Contact" value={studentData.contactNumber} />
+                  <InfoItem label="Email" value={studentData.email} />
+                  <InfoItem label="Hostel" value={studentData.hostel} />
+                  <InfoItem label="Room Number" value={studentData.roomNumber} />
                 </div>
               </div>
 
@@ -116,13 +127,9 @@ export default function WebId() {
 
             {/* Action Buttons */}
             <div className="flex gap-3 mt-6">
-              <Button variant="outline" className="flex-1 gap-2">
+              <Button className="flex-1 gap-2" onClick={handleDownload}>
                 <Download className="h-4 w-4" />
-                Download
-              </Button>
-              <Button variant="outline" className="flex-1 gap-2">
-                <Share2 className="h-4 w-4" />
-                Share
+                Download PDF
               </Button>
             </div>
 

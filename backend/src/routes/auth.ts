@@ -1,5 +1,5 @@
 import express from "express";
-import { auth } from "../config/firebase.js";
+import { auth, db } from "../config/firebase.js";
 
 const router = express.Router();
 
@@ -31,10 +31,20 @@ router.post("/login", async (req, res) => {
       }),
     });
 
-    const data = await response.json();
+    const data: any = await response.json();
 
     if (!response.ok) {
       return res.status(401).json({ error: data.error?.message || "Authentication failed" });
+    }
+
+    let profileData: Record<string, any> = {};
+    try {
+      const docSnapshot = await db.collection("users").doc(data.localId).get();
+      if (docSnapshot.exists) {
+        profileData = docSnapshot.data() ?? {};
+      }
+    } catch (err) {
+      console.error("Failed to fetch user profile:", err);
     }
 
     res.json({
@@ -42,6 +52,7 @@ router.post("/login", async (req, res) => {
       user: {
         uid: data.localId,
         email: data.email,
+        ...profileData,
       },
     });
   } catch (error: any) {
@@ -53,7 +64,19 @@ router.post("/login", async (req, res) => {
 // Signup
 router.post("/signup", async (req, res) => {
   try {
-    const { email, password, name, rollNo } = req.body;
+    const {
+      email,
+      password,
+      name,
+      rollNo,
+      branch,
+      contactNumber,
+      hostel,
+      roomNumber,
+      batch,
+      bloodGroup,
+      birthDate,
+    } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ error: "Email and password are required" });
@@ -74,22 +97,29 @@ router.post("/signup", async (req, res) => {
       }),
     });
 
-    const data = await response.json();
+    const data: any = await response.json();
 
     if (!response.ok) {
       return res.status(400).json({ error: data.error?.message || "Signup failed" });
     }
 
     // Store additional user data in Firestore if needed
-    if (name || rollNo) {
-      const { db } = await import("../config/firebase.js");
-      await db.collection("users").doc(data.localId).set({
-        name,
-        rollNo,
-        email,
-        createdAt: new Date(),
-      });
-    }
+    const profileData: Record<string, any> = {
+      email,
+      createdAt: new Date(),
+    };
+
+    if (name) profileData.name = name;
+    if (rollNo) profileData.rollNo = rollNo;
+    if (branch) profileData.branch = branch;
+    if (contactNumber) profileData.contactNumber = contactNumber;
+    if (hostel) profileData.hostel = hostel;
+    if (roomNumber) profileData.roomNumber = roomNumber;
+    if (batch) profileData.batch = batch;
+    if (bloodGroup) profileData.bloodGroup = bloodGroup;
+    if (birthDate) profileData.birthDate = birthDate;
+
+    await db.collection("users").doc(data.localId).set(profileData);
 
     res.json({
       token: data.idToken,
@@ -98,6 +128,13 @@ router.post("/signup", async (req, res) => {
         email: data.email,
         name,
         rollNo,
+        branch,
+        contactNumber,
+        hostel,
+        roomNumber,
+        batch,
+        bloodGroup,
+        birthDate,
       },
     });
   } catch (error: any) {
