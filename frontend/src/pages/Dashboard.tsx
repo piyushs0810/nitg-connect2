@@ -253,7 +253,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="card-base p-6 space-y-4">
+            <div className="card-base p-6 space-y-4 bg-gradient-to-r from-primary/10 to-transparent">
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                 <LayoutGrid className="h-4 w-4" /> Quick stats
               </div>
@@ -278,7 +278,7 @@ export default function Dashboard() {
           )}
 
           <section className="grid gap-6 lg:grid-cols-2">
-            <div className="card-base p-6 space-y-4">
+            <div className="card-base p-6 space-y-4 bg-gradient-to-r from-primary/10 to-transparent">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-foreground">Latest notices</h3>
                 <Link to="/notices" className="text-sm text-primary hover:underline">
@@ -312,7 +312,7 @@ export default function Dashboard() {
               )}
             </div>
 
-            <div className="card-base p-6 space-y-4">
+            <div className="card-base p-6 space-y-4 bg-gradient-to-r from-primary/10 to-transparent">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-foreground">Lost &amp; Found</h3>
                 <Link to="/lost-found" className="text-sm text-primary hover:underline">
@@ -358,7 +358,7 @@ export default function Dashboard() {
             </div>
           </section>
 
-          <section className="card-base p-6 space-y-4">
+          <section className="card-base p-6 space-y-4 bg-gradient-to-r from-sky-50 to-sky-100">
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-foreground">Marketplace highlights</h3>
               <Link to="/marketplace" className="text-sm text-primary hover:underline">
@@ -389,7 +389,7 @@ export default function Dashboard() {
           </section>
 
           <section className="space-y-6">
-            <div id="people-search" className="card-base p-6 space-y-4">
+            <div id="people-search" className="card-base p-6 space-y-4 bg-gradient-to-r from-sky-50 to-sky-100">
               <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <h3 className="font-semibold text-foreground flex items-center gap-2">
@@ -407,7 +407,7 @@ export default function Dashboard() {
               />
             </div>
 
-            <div id="clubs" className="card-base p-6 space-y-5">
+            <div id="clubs" className="card-base p-6 space-y-5 bg-gradient-to-r from-primary/10 to-transparent">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <h3 className="font-semibold text-foreground flex items-center gap-2">

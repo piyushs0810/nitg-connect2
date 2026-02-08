@@ -138,14 +138,14 @@ export default function Index() {
       <section className="bg-gradient-to-br from-primary/5 via-background to-accent/5 py-16 md:py-24">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 text-balance">
+              Connect {" "}
+              <span className="text-primary">NIT Goa</span>
+            </h1>
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
               <Users className="h-4 w-4" />
               Student Utility Portal
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 text-balance">
-              Everything you need at{" "}
-              <span className="text-primary">NIT Goa</span>
-            </h1>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
               Your one-stop destination for campus services. Access your ID, find lost items,
               check notices, and connect with fellow students.
@@ -204,12 +204,12 @@ export default function Index() {
       {/* Features Section */}
       <section className="py-16">
         <div className="container-custom">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-12 items-start">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
                 Built for Students, by Students
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {coreFeatures.map(({ title, description, icon: Icon, wrapperClass, iconClass }) => (
                   <div key={title} className="flex gap-4">
                     <div className={`flex-shrink-0 h-10 w-10 ${wrapperClass} rounded-lg flex items-center justify-center`}>
@@ -224,18 +224,23 @@ export default function Index() {
               </div>
             </div>
             {isAuthenticated ? (
-              <div className="space-y-4">
-                {extraFeatures.map(({ title, description, icon: Icon, wrapperClass, iconClass }) => (
-                  <div key={title} className="flex gap-4">
-                    <div className={`flex-shrink-0 h-10 w-10 ${wrapperClass} rounded-lg flex items-center justify-center`}>
-                      <Icon className={`h-5 w-5 ${iconClass}`} />
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 opacity-0 select-none">
+                  Built for Students, by Students
+                </h2>
+                <div className="space-y-5">
+                  {extraFeatures.map(({ title, description, icon: Icon, wrapperClass, iconClass }) => (
+                    <div key={title} className="flex gap-4">
+                      <div className={`flex-shrink-0 h-10 w-10 ${wrapperClass} rounded-lg flex items-center justify-center`}>
+                        <Icon className={`h-5 w-5 ${iconClass}`} />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-foreground mb-1">{title}</h3>
+                        <p className="text-sm text-muted-foreground">{description}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground mb-1">{title}</h3>
-                      <p className="text-sm text-muted-foreground">{description}</p>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             ) : (
               <div className="bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl p-8 md:p-12">
