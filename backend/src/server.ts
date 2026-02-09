@@ -1,6 +1,6 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import authRoutes from "./routes/auth.js";
 import lostFoundRoutes from "./routes/lostFound.js";
 import noticesRoutes from "./routes/notices.js";
@@ -8,8 +8,6 @@ import marketplaceRoutes from "./routes/marketplace.js";
 import usersRoutes from "./routes/users.js";
 import clubsRoutes from "./routes/clubs.js";
 import birthdaysRoutes from "./routes/birthdays.js";
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -42,3 +40,4 @@ app.use((err: any, _req: any, res: any, _next: any) => {
     stack: err?.stack,
   });
 });
+console.log("🧪 TEST ENV", process.env.FIREBASE_PROJECT_ID);
