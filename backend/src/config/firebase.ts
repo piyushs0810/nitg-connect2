@@ -1,26 +1,26 @@
 import admin from "firebase-admin";
-import { readFileSync } from "fs";
-import { join } from "path";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const projectId = process.env.FIREBASE_PROJECT_ID;
+const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
+
+console.log("🔥 ENV CHECK", {
+  projectId,
+  clientEmail,
+  keyExists: Boolean(privateKey),
+});
+
+if (!projectId || !clientEmail || !privateKey) {
+  throw new Error("❌ Missing Firebase environment variables");
+}
 
 if (!admin.apps.length) {
-  const serviceAccountPath = join(
-    __dirname,
-    "..",
-    "..",
-    "serviceAccountKey.json"
-  );
-
-  const serviceAccount = JSON.parse(
-    readFileSync(serviceAccountPath, "utf-8")
-  );
-
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert({
+      projectId,
+      clientEmail,
+      privateKey,
+    } as admin.ServiceAccount),
   });
 
   console.log("✅ Firebase Admin initialized");
