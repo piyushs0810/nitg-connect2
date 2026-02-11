@@ -74,7 +74,7 @@ FIREBASE_SERVICE_ACCOUNT_KEY={your_service_account_json}
 Create a `.env` file in the `frontend/` directory:
 
 ```env
-VITE_API_URL=http://localhost:3000/api
+VITE_API_URL=https://nitg-connect-backend.onrender.com/api
 ```
 
 ## Running the Application
@@ -87,7 +87,7 @@ npm run dev
 ```
 
 This will start:
-- **Backend**: http://localhost:3000 (Express API)
+- **Backend**: https://nitg-connect-backend.onrender.com (Express API)
 - **Frontend**: http://localhost:8080 (Vite dev server)
 
 The frontend is automatically configured to proxy API requests to the backend.
